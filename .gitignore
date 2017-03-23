@@ -1,4 +1,6 @@
 lib
 logs
 build
+experiments
+firmware
 mySrvKeystore
