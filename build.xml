@@ -1,0 +1,66 @@
+<project name="VesnaManagementSystem">
+    <property name="src-dir" location="src"/>
+    <property name="build-dir" location="build"/>
+    <property name="classes-dir" value="${build-dir}/classes"/>
+    <property name="dist-dir" location="dist"/>
+    <property name="lib-dir" value="lib"/>
+    <property name="main-class"  value="org.ijs.vesna.vms.Vms"/>
+
+    <path id="classpath">
+        <fileset dir="${lib-dir}" includes="
+            RXTXcomm.jar
+            commons-cli-1.2.jar
+            commons-fileupload-1.2.2.jar
+            commons-io-2.3.jar
+            jaxen-1.1.4.jar
+            jdom.jar
+            jetty-continuation-8.1.3.v20120416.jar
+            jetty-http-8.1.3.v20120416.jar
+            jetty-io-8.1.3.v20120416.jar
+            jetty-server-8.1.3.v20120416.jar
+            jetty-util-8.1.3.v20120416.jar
+            log4j-1.2.16.jar
+            servlet-api-3.0.jar
+        "/>
+    </path>
+
+    <target name="clean" description="compile the source">
+        <delete dir="${build-dir}" />
+        <delete dir="${dist-dir}" />
+    </target>
+
+    <target name="cleanall" depends="clean"/>
+
+    <target name="init">
+        <mkdir dir="${build-dir}"/>
+        <mkdir dir="${classes-dir}"/>
+        <mkdir dir="${build-dir}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the source " >
+        <javac srcdir="${src-dir}" destdir="${classes-dir}"
+            classpathref="classpath" includeantruntime="false" />
+    </target>
+
+    <target name="build" depends="compile">
+        <manifestclasspath property="jar.classpath" jarfile="${build-dir}/${ant.project.name}.jar">
+          <classpath refid="classpath"/>
+        </manifestclasspath>
+        <jar destfile="${build-dir}/${ant.project.name}.jar" basedir="${classes-dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Class-Path" value="${jar.classpath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="build">
+        <java fork="true" classname="${main-class}">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${build-dir}/${ant.project.name}.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+</project>

@@ -1,0 +1,372 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="Matevz Vucnik, matevz(DOT)vucnik(AT)ijs(DOT)si" />
+        <title>VESNA Management System</title>
+
+        <style type="text/css">
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            #panel {
+                float: left;
+                margin-left: 5px;
+                width: 550px;
+                height: 100%;
+            }
+
+            #map-container {
+                margin-left: 550px;
+                height: 100%;
+            }
+
+            #map {
+                height: 100%;
+            }
+
+            #response, #wrapper {
+                height: 150px;
+                margin: 0 5px 0 5px;
+                overflow: auto;
+            }
+
+            #wrapper td {
+                vertical-align: middle;
+                text-align: center;
+            }
+
+            #firmwareResponse {
+                height: 100px;
+                margin: 0 5px 0 5px;
+                overflow: auto;
+            }
+
+            #crcLengthResponse {
+                height: 65px;
+                margin: 0 5px 0 5px;
+                overflow: auto;
+            }
+
+            #loadingImgFile {
+                display: inline;
+                width: 50px;
+            }
+
+
+            #resetSocket {
+                float: right;
+                margin-right: 10px;
+            }
+
+            #resetSocketResponse {
+                height: 30;
+                overflow: auto;
+            }
+
+            #ReprogrammingImg {
+                display: inline;
+                width: 50px;
+            }
+
+            #fileUpload {
+                display: inline;
+                width: 400px;
+            }
+
+            #experimentFileUpload {
+                display: inline;
+                width: 400px;
+            }
+
+            #experimentImg {
+                display: inline;
+                width: 50px;
+            }
+
+            #experimentUploadResponse {
+                height: 40px;
+                margin: 0 5px 0 5px;
+                overflow: auto;
+            }
+
+            .title {
+                border-bottom: 1px solid #e0ecff;
+                overflow: hidden;
+                width: 156px;
+                cursor: pointer;
+                padding: 2px 0;
+                display: block;
+                color: #000;
+                text-decoration: none;
+            }
+
+            .title:visited {
+                color: #000;
+            }
+
+            .title:hover {
+                background: #e0ecff;
+            }
+
+            .info {
+                width: 200px;
+            }
+
+            .info-body {
+                width: 200px;
+                height: 200px;
+                line-height: 200px;
+                margin: 2px 0;
+                text-align: center;
+                overflow: hidden;
+            }
+
+            .logo {
+                display: inline;
+                float: right;
+                margin-right: 10px;
+            }
+        </style>
+
+        <script src="http://maps.googleapis.com/maps/api/js?v=3&amp;sensor=false"></script>
+        <script type="text/javascript">
+            function initialize() {
+                var latlng = new google.maps.LatLng(51.808615,14.581721);
+                var myOptions = {
+                    zoom: 5,
+                    center: latlng,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                }
+
+                var map = new google.maps.Map(document.getElementById("map"), myOptions);
+
+                var ctaLayer = new google.maps.KmlLayer('');
+                ctaLayer.setMap(map);
+            }
+        </script>
+        <script src="src/jquery-1.11.0.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#txtLog').click(function(event){
+                    event.preventDefault();
+                    var cluster = encodeURIComponent($("#cluster").val());
+                    window.location = '/request-log?'+cluster+'-request-response-txt.log';
+                });
+                $('#hexLog').click(function(event){
+                    event.preventDefault();
+                    var cluster = encodeURIComponent($("#cluster").val());
+                    window.location = '/request-log?'+cluster+'-request-response-hex.log';
+                });
+                $('#startExperiment').click(function(event){
+                    event.preventDefault();
+                    var experimentNum = $("#ComboBoxExperiment").val();
+                    var experimentTime = $("#ComboBoxTime").val();
+                    $('#response').html('<center><table id="wrapper"><tr><td><img src="images/loading.gif" alt="" /></td></tr></table></center>');
+                    var cluster = encodeURIComponent($("#cluster").val());
+                    $.get("/experiments/?cluster="+cluster+"&experiment="+experimentNum+"&duration="+experimentTime, function(result){
+                        $('#response').html(result);
+                    });
+                });
+                var runningGet = false;
+                $('#get').click(function(event){
+                    event.preventDefault();
+                    if(runningGet == false) {
+                        runningGet = true;
+                        $('#response').html('<center><table id="wrapper"><tr><td><img src="images/loading.gif" alt="" /></td></tr></table></center>');
+                        var cluster = encodeURIComponent($("#cluster").val());
+                        var getRequest = encodeURIComponent($('#getResource').val());
+                        $.get("/communicator?cluster="+cluster+"&method=get&resource="+getRequest, function(result){
+                            $('#response').html(result.replace(/([\r\n]?)(\r\n|\n\r|\r|\n)/g,"<br>"));
+                            runningGet = false;
+                        });
+                    }
+                });
+                var runningPost = false;
+                $('#post').click(function(event){
+                    event.preventDefault();
+                    if(runningPost == false) {
+                        runningPost = true;
+                        $('#response').html('<center><table id="wrapper"><tr><td><img src="images/loading.gif" alt="" /></td></tr></table></center>');
+                        var cluster = encodeURIComponent($("#cluster").val());
+                        var postResource = encodeURIComponent($('#postResource').val());
+                        var postContent = encodeURIComponent($('#postContent').val());
+                        $.get("/communicator?cluster="+cluster+"&method=post&resource="+postResource+"&content="+postContent, function(result){
+                            $('#response').html(result.replace(/([\r\n]?)(\r\n|\n\r|\r|\n)/g,"<br>"));
+                            runningPost = false;
+                        });
+                    }
+                });
+                var reprogramming = false;
+                $('#reprogram').click(function(event){
+                    event.preventDefault();
+                    if(reprogramming == false) {
+                        reprogramming = true;
+                        $('#reprogrammingImg').html('<img src="images/loading1.gif" />');
+                        var cluster = encodeURIComponent($("#cluster").val());
+                        var firmwareResource = encodeURIComponent($('#firmwareResource').val());
+                        $.get("/firmware-upload?cluster="+cluster+"&resource="+firmwareResource, function(result){
+                            $('#firmwareResponse').html(result.replace(/([\r\n]?)(\r\n|\n\r|\r|\n)/g,"<br>"));
+                            $('#reprogrammingImg').empty();
+                            reprogramming = false;
+                        });
+                    }
+                });
+                var reseting = false;
+                $('#resetSocket').click(function(event){
+                    event.preventDefault();
+                    if(reseting == false) {
+                        reseting = true;
+                        var cluster = $("#cluster").val();
+                        $.get("/connection-reset?cluster="+cluster, function(result){
+                            $('#resetSocketResponse').html(result);
+                            reseting = false;
+                        });
+                    }
+                });
+            });
+        </script>
+        <script type="text/javascript" src="src/jquery.form.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                $('#fileUploadForm').ajaxForm({
+                    beforeSubmit: ShowRequest,
+                    success: SubmitSuccesful,
+                    error: AjaxError
+                });
+            });
+
+            function ShowRequest(formData, jqForm, options) {
+                $('#loadingImgFile').html('<img src="images/loading1.gif" />');
+                return true;
+            }
+
+            function AjaxError() {
+                alert("An AJAX error occured.");
+            }
+
+            function SubmitSuccesful(responseText, statusText) {
+                $('#loadingImgFile').empty();
+                $('#crcLengthResponse').html(responseText);
+            }
+        </script>
+        <script type="text/javascript">
+            $(function() {
+                $('#experimentFileUploadForm').ajaxForm({
+                    beforeSubmit: ShowRequest1,
+                    success: SubmitSuccesful1,
+                    error: AjaxError1
+                });
+            });
+
+            function ShowRequest1(formData, jqForm, options) {
+                $('#experimentImg').html('<img src="images/loading1.gif" />');
+                var cluster = encodeURIComponent($("#cluster").val());
+                formData.push({ name: cluster, value: cluster, fieldName: cluster });
+                return true;
+            }
+
+            function AjaxError1() {
+                alert("An AJAX error occured.");
+            }
+
+            function SubmitSuccesful1(responseText, statusText) {
+                $('#experimentImg').empty();
+                $('#experimentUploadResponse').html(responseText);
+            }
+        </script>
+        <script type="text/javascript" src="src/jquery.watermark.js"></script>
+        <script>
+            $(function () {
+                $('#getResource').watermark('Enter Resource');
+            });
+        </script>
+        <script>
+            $(function () {
+                $('#postResource').watermark('Enter Resource');
+            });
+        </script>
+        <script>
+            $(function () {
+                $('#postContent').watermark('Enter Content');
+            });
+        </script>
+        <script>
+            $(function () {
+                $('#firmwareResource').watermark('Enter Resource');
+            });
+        </script>
+    </head>
+    <body onload="initialize()">
+        <div id="panel">
+            <h2>Vesna Management System
+                <a href="http://sensorlab.ijs.si">
+                    <img class="logo" src="images/sensorlab-logo.png" />
+                </a>
+            </h2>
+            <p>
+                <strong>Wireless Sensor Network</strong>
+            </p>
+
+            Choose the cluster:
+            <select id="cluster">
+                <option value="10000">Vesna</option>                
+            </select><br>
+
+            <div id="experimentFileUpload">
+                Describe the experiment (<a href="static/readme.html">readme</a>):<br>
+                <form id="experimentFileUploadForm" method="POST" action="/experiment-file" enctype="multipart/form-data" style='display: inline'>
+                    <input id="experimentFile" type="file" name="experimentFile" />
+                    <input id="experiment" type="submit" value="Upload Experiment" />
+                </form>
+            </div>
+            <div id="experimentImg">
+            </div>
+            <div id="experimentUploadResponse">
+            </div>
+            Download request-response log file in text or in hexadecimal format:<br>
+            <a id="txtLog" href=#>Text request-response log file.</a><br>
+            <a id="hexLog" href=#>Hex request-response log file</a><br>
+            <form>
+                <br><input id="getResource" type="text" name="resource" style='width: 420px;'/>
+                <button id="get">GET</button><br>
+            </form>
+
+            <form>
+                <input id="postResource" type="text" name="postres" style='width: 208px;'/>
+                <input id="postContent" type="text" name="postcon" style='width: 208px;'/>
+                <button id="post">POST</button><br>
+            </form>
+            <div id="response">
+            </div>
+
+            <div id="fileUpload">
+                <br>Remote reprogramming:<br>
+                <form id="fileUploadForm" method="POST" action="/firmware-bin" enctype="multipart/form-data" style='display: inline;'>
+                    <input type="file" id="postedFile" name="postedFile" />
+                    <input id="firmware" type="submit" value="Upload Firmware" />
+                </form>
+            </div>
+            <div id="loadingImgFile">
+            </div>
+            <div id="crcLengthResponse">
+            </div>
+            <form style='display: inline;'>
+                <input id="firmwareResource" autocomplete="on" style='width: 200px;' />
+                <button id="reprogram">Reprogram</button>
+            </form>
+            <div id="reprogrammingImg">
+            </div>
+            <div id="firmwareResponse">
+            </div>
+            <div id="resetSocketResponse">
+            </div>
+            <button id="resetSocket">Reset Socket</button><br>
+        </div>
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+    </body>
+</html>
