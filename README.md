@@ -17,3 +17,8 @@ The VESNA management system daemon name is vmsd. You can
 use standard service commands to interact with the daemon i.e.:
 
 service vmsd start|stop|restart|reload|status
+
+Run in docker container:
+
+  `docker build -t vms .`
+  `docker run -p 9000:9000 -it --device=/dev/ttyS1 vms`
