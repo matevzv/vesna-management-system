@@ -1,4 +1,4 @@
-FROM armv7/armhf-ubuntu:xenial
+FROM armhf/debian:jessie
 
 # File Author / Maintainer
 MAINTAINER Matevz Vucnik
