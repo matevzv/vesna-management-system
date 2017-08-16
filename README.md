@@ -20,5 +20,5 @@ service vmsd start|stop|restart|reload|status
 
 Run in docker container:
 
-  `docker build -t vms .`
-  `docker run -p 9000:9000 -it --device=/dev/ttyS1 vms`
+    $ docker build -t vms .
+    $ docker run -p 9000:9000 -it --device=/dev/ttyS1 vms
