@@ -1,4 +1,4 @@
-FROM armhf/debian:jessie
+FROM arm32v7/debian:jessie
 
 # File Author / Maintainer
 MAINTAINER Matevz Vucnik
