@@ -5,7 +5,7 @@
     git: repo=https://github.com/matevzv/vesna-management-system dest=~/deploy/vms
 
   - name: build docker file
-    command: docker build -t vms . ~/deploy/vms
+    command: docker build -t vms ~/deploy/vms
 
   - name: run docker image
     command: docker run -d -p 9000:9000 --device=/dev/ttyS1 vms
