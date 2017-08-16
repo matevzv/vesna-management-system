@@ -12,7 +12,7 @@ RUN apt-get install -y ant
 RUN apt-get install -y librxtx-java
 
 RUN cd /root && \
-git clone -b docker-support https://github.com/matevzv/vesna-management-system
+git clone https://github.com/matevzv/vesna-management-system
 WORKDIR /root/vesna-management-system
 RUN ant build
 RUN sed -i 's|10000|/dev/ttyS1|g' webapp/vms/vms.html
