@@ -12,6 +12,7 @@ RUN apt-get install -y git
 RUN apt-get install -y default-jdk
 RUN apt-get install -y ant
 RUN apt-get install -y librxtx-java
+RUN apt-get clean
 
 ADD . /root/vms
 WORKDIR /root/vms
