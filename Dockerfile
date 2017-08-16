@@ -3,6 +3,8 @@ FROM armv7/armhf-ubuntu:xenial
 # File Author / Maintainer
 MAINTAINER Matevz Vucnik
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update
 RUN apt-get install -y git
 RUN apt-get install -y default-jdk
