@@ -24,14 +24,14 @@ RUN apt-get install -y librxtx-java
 RUN apt-get clean
 
 # Compile and install OpenOCD
-RUN cd /root &&\
+RUN cd /root && \
 git clone -b bbblack https://github.com/avian2/openocd.git
 WORKDIR /root/openocd
 RUN dpkg-buildpackage -uc -b
 RUN dpkg -i ../openocd_0.8.0-4tomaz-bbblack-1_armhf.deb
 
 # Compile and install vesna-drivers
-RUN cd /root &&\
+RUN cd /root && \
 git clone -b bbblack https://github.com/avian2/vesna-drivers.git
 WORKDIR /root/vesna-drivers/VESNADriversDemo
 RUN make drivers_demo.loadbone
