@@ -21,7 +21,7 @@ service vmsd start|stop|restart|reload|status
 Run in Docker container. Env VESNA=true will compile and flash VESNA firmware:
 
     $ docker build -t vms .
-    $ docker run -p 9000:9000 -it -v /sys/class/gpio:/sys/class/gpio \
+    $ docker run -it -p 9000:9000 -v /sys/class/gpio:/sys/class/gpio \
       --device=/dev/ttyS1 --privileged \
       -e VESNA=true \
       -e SERIAL=/dev/ttyS1 \
