@@ -1,4 +1,4 @@
-FROM sensorlab6/log-a-tec
+FROM sensorlab6/vesna-tools
 
 # File Author / Maintainer
 MAINTAINER Matevz Vucnik

@@ -18,7 +18,11 @@ use standard service commands to interact with the daemon i.e.:
 
 service vmsd start|stop|restart|reload|status
 
-Run in docker container:
+Run in Docker container. Env VESNA=true will compile and flash VESNA firmware:
 
     $ docker build -t vms .
-    $ docker run -p 9000:9000 -it --device=/dev/ttyS1 vms
+    $ docker run -p 9000:9000 -it -v /sys/class/gpio:/sys/class/gpio \
+      --device=/dev/ttyS1 --privileged \
+      -e VESNA=true \
+      -e SERIAL=/dev/ttyS1 \
+      vms
