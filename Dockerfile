@@ -1,5 +1,7 @@
 FROM sensorlab6/vesna-tools
 
+ARG ghtoken
+
 # File Author / Maintainer
 MAINTAINER Matevz Vucnik
 
@@ -7,10 +9,8 @@ MAINTAINER Matevz Vucnik
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Clone vesna-drivers source
-# Note: replace <token> here with a GitHub personal access token
-# https://github.com/settings/tokens
 WORKDIR /root
-RUN git clone -b logatec-3 https://<token>@github.com/avian2/vesna-drivers.git
+RUN git clone -b logatec-3 --depth 1 https://$ghtoken@github.com/avian2/vesna-drivers.git
 WORKDIR /root/vesna-drivers/Applications/Logatec/NodeSpectrumSensorLocal
 RUN	cp ../Clusters/local_usart_networkconf.h ../networkconf.h && \
 	make node.out
