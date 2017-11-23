@@ -4,6 +4,9 @@
   - name: download git project
     git: repo=https://github.com/matevzv/vesna-management-system dest=~/deploy/vms
 
+  - name: Copy GitHub deploy key
+    copy: remote_src=True src=/etc/videk/id_rsa_github dest=~/deploy/vms
+
   - name: build docker file
     command: docker build -t vms ~/deploy/vms
 
