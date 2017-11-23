@@ -1,18 +1,22 @@
 FROM sensorlab6/vesna-tools
 
-ARG ghtoken
-
 # File Author / Maintainer
 MAINTAINER Matevz Vucnik
 
 # Set debian frontend
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Clone vesna-drivers source
+# Compile firmware
 WORKDIR /root
-RUN git clone -b logatec-3 --depth 1 https://$ghtoken@github.com/avian2/vesna-drivers.git
+COPY id_rsa_github .ssh/id_rsa
+RUN chown root:root .ssh/id_rsa && \
+	chmod 600 .ssh/id_rsa && \
+	/bin/echo -e 'Host github.com\nHostname ssh.github.com\nPort 443' > .ssh/config && \
+	ssh-keyscan -p 443 -t rsa ssh.github.com > .ssh/known_hosts
+RUN git clone -b logatec-3 --depth 1 git@github.com:sensorlab/vesna-drivers.git
+
 WORKDIR /root/vesna-drivers/Applications/Logatec/NodeSpectrumSensorLocal
-RUN	cp ../Clusters/local_usart_networkconf.h ../networkconf.h && \
+RUN cp ../Clusters/local_usart_networkconf.h ../networkconf.h && \
 	make node.out
 
 # Clone vesna management system source
