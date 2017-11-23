@@ -3,7 +3,7 @@
 # Compile vesna drivers
 if [ "$VESNA" = "true" ]; then
   cd /root/vesna-drivers/Applications/Logatec/NodeSpectrumSensorLocal
-  make node.loadbone
+  make node.load
 else
   echo "Not compiling VESNA drivers!"
 fi
