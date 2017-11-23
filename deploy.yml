@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: 193.2.205.215
   tasks:
   - name: download git project
     git: repo=https://github.com/matevzv/vesna-management-system dest=~/deploy/vms
