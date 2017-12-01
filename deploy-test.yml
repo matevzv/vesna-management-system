@@ -15,7 +15,7 @@
       chdir: ~/deploy/vms
 
   - name: run docker image
-    command: docker run -d --privileged vms
+    command: docker run -it --privileged vms
     register: vms
 
   - debug: msg="{{ vms.stdout }}"

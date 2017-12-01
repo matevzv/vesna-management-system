@@ -1,5 +1,5 @@
 import serial
-from vesna import alh
+import vesna.alh
 
 def main():
   f = serial.Serial('/dev/ttyS2', 115200, timeout=10)

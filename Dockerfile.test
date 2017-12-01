@@ -22,7 +22,7 @@ RUN cp ../Clusters/local_usart_networkconf.h ../networkconf.h && \
 RUN apt-get install -y python-pip python-numpy python-lxml && \
 	pip install vesna-alhtools
 
-COPY test/test.sh /root/test.sh
-RUN chmod 755 /root/test.sh
+COPY tests /root/tests
+RUN chmod 755 /root/tests/test.sh
 
-ENTRYPOINT ["/root/test.sh"]
+ENTRYPOINT ["/root/tests/test.sh"]
