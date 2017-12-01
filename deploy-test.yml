@@ -1,0 +1,23 @@
+---
+- hosts: 193.2.205.215
+  tasks:
+  - name: deploy repo changes
+    synchronize:
+      src: .
+      dest: ~/deploy/vms
+
+  - name: Copy GitHub deploy key
+    copy: remote_src=True src=/etc/videk/id_rsa_github dest=~/deploy/vms
+
+  - name: build docker file
+    command: docker build -t vms -f Dockerfile.test .
+    args:
+      chdir: ~/deploy/vms
+
+  - name: run docker image
+    command: docker run -d --privileged vms
+    register: vms
+
+  - debug: msg="{{ vms.stdout }}"
+
+  - debug: msg="{{ vms.stderr }}"
