@@ -1,5 +1,5 @@
 ---
-- hosts: 193.2.205.215
+- hosts: 193.2.205.212
   tasks:
   - name: deploy repo changes
     synchronize:
