@@ -2,7 +2,7 @@
 - hosts: 193.2.205.212
   tasks:
   - name: Creates directory
-    file: path=~/deploy/vms state=directory
+    file: path=~/deploy state=directory
 
   - name: deploy repo changes
     synchronize:
