@@ -1,5 +1,7 @@
 # Vesna Management System
 
+test
+
 Run install.sh/uninstall.sh script as root
 
 Requires Java
